@@ -1,0 +1,42 @@
+.trending-container {
+    margin-left: 85px;
+    margin-top: 80px;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .song-card {
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    width: 150px;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .song-card img {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .song-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
+  }
+  
+  .song-card button {
+    background-color: #de6b2c;
+    color: #ffffff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .song-card button:hover {
+    background-color: #ff7f50;
+  }
+  
