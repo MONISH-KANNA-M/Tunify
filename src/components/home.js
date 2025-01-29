@@ -1,83 +1,71 @@
-import React, { useRef, useState } from "react";
-import { FaPlay, FaPause, FaStepForward, FaStepBackward } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaPlay, FaPause } from "react-icons/fa";
 import logo from "./../assets/logo.jpg";
-import "./home.css";
 import badassAudio from "./../music/Badass-MassTamilan.dev.mp3";
+import "./home.css";
 
 const Home = () => {
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioRefs, setAudioRefs] = useState([]);
+  const [isPlaying, setIsPlaying] = useState([]);
 
-  const handlePlayPause = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+  const handlePlayPause = (index) => {
+    const newAudioRefs = [...audioRefs];
+    const newIsPlaying = [...isPlaying];
+    
+    if (newIsPlaying[index]) {
+      newAudioRefs[index].pause();
+      newIsPlaying[index] = false;
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      newAudioRefs[index].play();
+      newIsPlaying[index] = true;
     }
+
+    setAudioRefs(newAudioRefs);
+    setIsPlaying(newIsPlaying);
   };
 
   return (
-    <div className="main-container">
-       {/* Recently Played Section */}
-       <section className="recently-played-section">
-          <h2>Recently Played</h2>
-          <div className="grid-container">
-            <div className="card">
-              <img src={logo} alt="Track" />
-              <h5>Track 1</h5>
+    <div className="home-container">
+      <section className="recently-played">
+        <h2>Recently Played</h2>
+        <div className="grid-container">
+          {["Track 1", "Track 2", "Track 3", "Track4", "Track5", "Track6", "Track7"].map((track, index) => (
+            <div className="card" key={index}>
+              <img src={logo} alt={track} />
+              <h5>{track}</h5>
             </div>
-            <div className="card">
-              <img src={logo} alt="Track" />
-              <h5>Track 2</h5>
-            </div>
-            <div className="card">
-              <img src={logo} alt="Track" />
-              <h5>Track 3</h5>
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </section>
 
-      {/* Content Sections */}
-      <div className="content">
-        {/* Discover by You Section */}
-        <section className="discover-section">
-          <h2>Discovered By You</h2>
-          <div className="card">
+      <section className="discover-section">
+        <h2>Discovered By You</h2>
+        {["Badass Track 1", "Badass Track 2", "Badass Track 3", "Badass Track 4"].map((track, index) => (
+          <div className="card" key={index}>
             <img src={logo} alt="Track Art" />
-            <h5>Badass Track</h5>
-            <audio ref={audioRef} src={badassAudio}></audio>
-            <div className="controls">
-              <button onClick={handlePlayPause}>
-                {isPlaying ? <FaPause /> : <FaPlay />}
-              </button>
-          
-            </div>
+            <h5>{track}</h5>
+            <audio
+              ref={(el) => (audioRefs[index] = el)}
+              src={badassAudio}
+            ></audio>
+            <button onClick={() => handlePlayPause(index)}>
+              {isPlaying[index] ? <FaPause /> : <FaPlay />}
+            </button>
           </div>
-        </section>
+        ))}
+      </section>
 
-        {/* Favourites Section */}
-        <section className="favourites-section">
-          <h2>Your Favourites</h2>
-          <div className="grid-container">
-            <div className="card">
-              <img src={logo} alt="Artist" />
-              <h5>Artist 1</h5>
+      <section className="favourites-section">
+        <h2>Your Favourites</h2>
+        <div className="grid-container">
+          {["Artist 1", "Artist 2", "Artist 3", "Artist 4", "Artist 5", "Artist 6", "Artist 7"].map((artist, index) => (
+            <div className="card" key={index}>
+              <img src={logo} alt={artist} />
+              <h5>{artist}</h5>
             </div>
-            <div className="card">
-              <img src={logo} alt="Artist" />
-              <h5>Artist 2</h5>
-            </div>
-            <div className="card">
-              <img src={logo} alt="Artist" />
-              <h5>Artist 3</h5>
-            </div>
-          </div>
-        </section>
-
-       
-      </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

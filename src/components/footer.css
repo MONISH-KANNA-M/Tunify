@@ -1,97 +1,142 @@
-/* General Styles */
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: #ffffff;
-  }
-  
-  h1, h2, h3, h4, h5 {
-    margin: 0;
-  }
-  
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  /* Main Container */
-  .main-container {
-    padding: 20px;
-    background-color: #121212;
-  }
-  
-  /* Section Styles */
-  .section-container {
-    margin-bottom: 50px;
-  }
-  
-  .section-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  /* Card Container */
-  .card-container {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  
-  .card-container::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Card Styles */
-  .card {
-    background-color: #1f1f1f;
-    border-radius: 10px;
-    width: 150px;
-    text-align: center;
-    padding: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .card img {
-    width: 100%;
-    border-radius: 10px;
-  }
-  
-  .card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
-  }
-  
-  .card h5 {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #ffffff;
-  }
-  
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .controls button {
-    font-size: 20px;
-    color: #ffffff;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .controls button:hover {
-    transform: scale(1.2);
-  }
-  
-  /* Recently Played Section */
-  .recently-played-section .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
+p{
+  color:#de6b2c
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1a1a1a;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+}
+
+.footer-left,
+.footer-middle,
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.footer-left {
+  flex: 1;
+  gap: 10px;
+}
+
+.album-cover {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+}
+
+.song-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.song-title {
+  font-weight: bold;
+}
+
+.artist-name {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.heart-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.footer-middle {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.play-pause-btn {
+  font-size: 2rem;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 80%;
+}
+
+.progress-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  background: #de6b2c; /* Changed the color to orange */
+  height: 5px;
+  border-radius: 5px;
+  outline: none;
+}
+
+.progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.current-time,
+.total-time {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.footer-right {
+  padding-right: 40px;
+  flex: 1;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.footer-right button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Reduced size for Volume Progress Bar */
+.footer-right input[type="range"] {
+  -webkit-appearance: none;
+  background: #de6b2c; /* Same orange color */
+  height: 3px;  /* Reduced height */
+  border-radius: 5px;
+  outline: none;
+  flex: 1;
+}
+
+.footer-right input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;  /* Reduced thumb size */
+  height: 8px; /* Reduced thumb size */
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}

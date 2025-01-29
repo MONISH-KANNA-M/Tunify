@@ -1,146 +1,23 @@
-/* General Styles */
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #121212;
-  color: #ffffff;
+.home-container {
+  padding: 100px 20px;
 }
 
-h1, h2, h3, h4, h5 {
-  margin: 0;
-}
-
-a {
-  text-decoration: none;
-}
-
-/* Main Container */
-.main-container {
+section {
+  margin-bottom: 50px;
   display: flex;
-  height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  padding-top: 90px;
-  width: 60px;
-  background-color: #1f1f1f;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-  height: 87vh;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 20px;
+
 }
 
-.sidebar ul li a {
-  color: #ffffff;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.sidebar ul li a:hover {
+h2 {
   color: #de6b2c;
-  transform: scale(1.2);
-  box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
 }
 
-/* Top Navigation */
-.top-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #1f1f1f;
-  padding: 10px 20px;
-  width: calc(100% - 60px);
-  position: fixed;
-  top: 0;
-  z-index: 10;
-}
-
-.top-nav .left-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo {
-  height: 50px;
-  border-radius: 25px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
-}
-
-.search-section {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-input[type="search"] {
-  width: 400px;
-  padding: 10px;
-  border: 1px solid #6d6a6a;
-  border-radius: 5px;
-  background-color: #1f1f1f;
-  color: #ffffff;
-  transition: all 0.3s ease;
-}
-
-input[type="search"]::placeholder {
-  color: #888;
-}
-
-input[type="search"]:hover {
-  box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
-}
-
-.right-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Sections */
-.section-container {
-  margin-top: 70px;
-  padding: 20px 30px;
-}
-
-.section-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.card-container {
+.grid-container {
+  margin-left: 40px;
   display: flex;
   gap: 20px;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-
-.card-container::-webkit-scrollbar {
-  display: none;
-}
-
 .card {
   background-color: #1f1f1f;
   border-radius: 10px;
@@ -160,87 +37,9 @@ input[type="search"]:hover {
   box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
 }
 
-.card h5 {
-  margin-top: 10px;
-  font-size: 16px;
-}
-
 .card button {
-  margin-top: 10px;
   background-color: #de6b2c;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
   color: #ffffff;
-  cursor: pointer;
-}
-
-.card button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(222, 107, 44, 0.5);
-}
-
-/* Favorites, Artists, and Recently Played Sections */
-.favorites, .artists, .recently-played {
-  margin-top: 50px;
-}
-
-.favorites .card-container,
-.artists .card-container,
-.recently-played .card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-/* Footer Player */
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 60px;
-  width: calc(100% - 60px);
-  background-color: #1f1f1f;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #6d6a6a;
-}
-
-.footer .left-section,
-.footer .middle-section,
-.footer .right-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.footer .middle-section button {
-  font-size: 20px;
-  color: #ffffff;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.footer .middle-section button:hover {
-  transform: scale(1.2);
-}
-
-.footer .progress-bar {
-  flex: 1;
-  height: 5px;
-  background-color: #6d6a6a;
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.footer .progress-bar .progress {
-  width: 50%;
-  height: 100%;
-  background-color: #de6b2c;
-  position: absolute;
-  top: 0;
-  left: 0;
+  padding: 8px 15px;
+  border-radius: 25px;
 }

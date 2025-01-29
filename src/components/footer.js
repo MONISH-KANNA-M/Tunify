@@ -1,73 +1,64 @@
-import React, { useRef, useState } from "react";
-import { FaPlay, FaPause, FaStepForward, FaStepBackward } from "react-icons/fa";
-import logo from "./../assets/logo.jpg";
-import "./home.css";
-import badassAudio from "./../music/Badass-MassTamilan.dev.mp3";
+import React, { useState } from "react";
+import { FaPlay, FaPause } from "react-icons/fa";
+import { GiNextButton, GiPreviousButton } from "react-icons/gi";
+import { RiRepeat2Fill } from "react-icons/ri";
+import { IoMdVolumeHigh } from "react-icons/io";
+import { BiFullscreen } from "react-icons/bi";
+import './footer.css';
 
-const Home = () => {
-  const audioRef = useRef(null);
+const Footer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handlePlayPause = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
   return (
-    <div className="main-container">
-      {/* Recently Played Section */}
-      <section className="recently-played-section section-container">
-        <h2 className="section-title">Recently Played</h2>
-        <div className="card-container">
-          {[1, 2, 3].map((track) => (
-            <div className="card" key={`track-${track}`}>
-              <img src={logo} alt={`Track ${track}`} />
-              <h5>Track {track}</h5>
-            </div>
-          ))}
+    <div className="footer">
+      <div className="footer-left">
+        <img src="https://via.placeholder.com/50" alt="Album" className="album-cover" />
+        <div className="song-info">
+          <p className="song-title">Song Title</p>
+          <p className="artist-name">Artist Name</p>
         </div>
-      </section>
+        <button className="heart-btn">
+          🤍
+        </button>
+      </div>
 
-      {/* Discover by You Section */}
-      <section className="discover-section section-container">
-        <h2 className="section-title">Discovered By You</h2>
-        <div className="card">
-          <img src={logo} alt="Badass Track" />
-          <h5>Badass Track</h5>
-          <audio ref={audioRef} src={badassAudio}></audio>
-          <div className="controls">
-            <button onClick={handlePlayPause}>
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
-            <button>
-              <FaStepBackward />
-            </button>
-            <button>
-              <FaStepForward />
-            </button>
-          </div>
+      <div className="footer-middle">
+        <div className="controls">
+          <button>
+            <GiPreviousButton />
+          </button>
+          <button className="play-pause-btn" onClick={togglePlayPause}>
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+          <button>
+            <GiNextButton />
+          </button>
+          <button>
+            <RiRepeat2Fill />
+          </button>
         </div>
-      </section>
+        <div className="progress-bar">
+          <span className="current-time">0:00</span>
+          <input type="range" className="progress-slider" min="0" max="100" />
+          <span className="total-time">3:45</span>
+        </div>
+      </div>
 
-      {/* Favourites Section */}
-      <section className="favourites-section section-container">
-        <h2 className="section-title">Your Favourites</h2>
-        <div className="card-container">
-          {[1, 2, 3].map((artist) => (
-            <div className="card" key={`artist-${artist}`}>
-              <img src={logo} alt={`Artist ${artist}`} />
-              <h5>Artist {artist}</h5>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="footer-right">
+        <button>
+          <IoMdVolumeHigh />
+        </button>
+        <input type="range" className="volume-slider" min="0" max="100" />
+        <button>
+          <BiFullscreen />
+        </button>
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default Footer;
