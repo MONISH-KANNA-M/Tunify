@@ -18,7 +18,7 @@ body {
   flex-direction: column;
   align-items: center;
   position: fixed; /* Keep sidebar fixed */
-  top: 90px; /* Start after the navbar */
+  top: 80px; /* Start after the navbar */
   bottom: 0; /* Ensure it extends to the bottom */
   justify-content: flex-start; /* Align items at the top */
 }

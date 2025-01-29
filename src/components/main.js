@@ -10,6 +10,7 @@ import { RiPlayListFill, RiRadioFill } from "react-icons/ri";
 import { IoMdSettings } from "react-icons/io";
 import logo from "./../assets/logo.jpg";
 import { SiPodcastaddict } from "react-icons/si";
+import Suggest from "./suggest";
 
 const Main = () => {
   return (
@@ -56,4 +57,17 @@ const Main = () => {
   );
 };
 
-export default Main;
+  // Filter courses based on the search query
+  const filteredCourses = searchQuery
+    ? allCourses.filter((course) =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allCourses;
+
+  return (
+    <section className="content mt-5 pt-3">
+      <Suggest />
+      <Section title="Courses" courses={filteredCourses} onAddToCart={onAddToCart} />
+    </section>
+  );
+};

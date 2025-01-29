@@ -1,24 +1,30 @@
 .home-container {
-  padding: 100px 20px;
+  margin-left: 85px; /* Adjust based on sidebar width */
+  margin-top: 80px; /* Adjust based on navbar height */
+  padding: 20px;
 }
 
 section {
   margin-bottom: 50px;
-  display: flex;
-  gap: 20px;
-
 }
 
-h2 {
+.h {
   color: #de6b2c;
+  display: block;
 }
+
 
 .grid-container {
-  margin-left: 40px;
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
+
+
+
+
 .card {
+  display: inline;
   background-color: #1f1f1f;
   border-radius: 10px;
   width: 150px;
@@ -38,7 +44,7 @@ h2 {
 }
 
 .card button {
-  background-color: #de6b2c;
+  background-color: #1f1f1f;
   color: #ffffff;
   padding: 8px 15px;
   border-radius: 25px;
