@@ -1,16 +1,19 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
 import Main from "./components/main";
-import Footer from "./components/footer"; 
+import Footer from "./components/footer";
+import { AudioProvider } from "./context/AudioContext";
+import { UserProvider } from "./context/UserContext";
 
 const App = () => {
   return (
-    <>
-      <Routes>
-        <Route path="/*" element={<Main />} />
-      </Routes>
-      <Footer /> 
-    </>
+    <UserProvider>
+      <AudioProvider>
+        <div className="app-container">
+          <Main />
+          <Footer />
+        </div>
+      </AudioProvider>
+    </UserProvider>
   );
 };
 

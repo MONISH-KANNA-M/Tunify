@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
 import Home from "./home";
 import Trending from "./trending";
-import Login from "./login"; 
-import Profile from "./profile"; 
+import Login from "./login";
+import Profile from "./profile";
+import Radio from "./radio";
+import Podcast from "./podcast";
+import Explore from "./explore";
+import Playlists from "./playlists";
+import Favorites from "./favorites";
+import ProtectedRoute from "./ProtectedRoute";
+import { useUser } from "../context/UserContext";
 import "./main.css";
 import { AiFillHome } from "react-icons/ai";
 import { MdOutlineExplore } from "react-icons/md";
@@ -14,25 +21,65 @@ import { SiPodcastaddict } from "react-icons/si";
 import { TbMusicHeart } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import logo from "./../assets/logo.jpg";
-import Footer from "./footer";
 
 const Main = () => {
   const navigate = useNavigate();
-  const [currentSong, setCurrentSong] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { user, favorites, logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="main-container">
       <aside className="sidebar">
         <nav>
           <ul>
-            <li><Link to="/"><AiFillHome /></Link></li>
-            <li><Link to="/explore"><MdOutlineExplore /></Link></li>
-            <li><Link to="/trending"><FaFire /></Link></li>
-            <li><Link to="/playlists"><RiPlayListFill /></Link></li>
-            <li><Link to="/radio"><RiRadioFill /></Link></li>
-            <li><Link to="/podcasts"><SiPodcastaddict /></Link></li>
-            <li><Link to="/settings"><IoMdSettings /></Link></li>
+            <li>
+              <Link to="/" title="Home">
+                <AiFillHome />
+              </Link>
+            </li>
+            <li>
+              <Link to="/explore" title="Explore">
+                <MdOutlineExplore />
+              </Link>
+            </li>
+            <li>
+              <Link to="/trending" title="Trending">
+                <FaFire />
+              </Link>
+            </li>
+            <li>
+              <Link to="/playlists" title="Playlists">
+                <RiPlayListFill />
+              </Link>
+            </li>
+            <li>
+              <Link to="/radio" title="Radio">
+                <RiRadioFill />
+              </Link>
+            </li>
+            <li>
+              <Link to="/podcasts" title="Podcasts">
+                <SiPodcastaddict />
+              </Link>
+            </li>
+            <li>
+              <Link to="/settings" title="Settings">
+                <IoMdSettings />
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -48,32 +95,87 @@ const Main = () => {
             <button>Search</button>
           </div>
           <div className="right-section">
-            <button><TbMusicHeart /></button>
-            <button onClick={() => navigate("/profile")}><CgProfile /></button>
-            <button onClick={() => navigate("/login")}>Login</button>
+            <button className="favorites-btn" onClick={() => navigate("/favorites")}>
+              <TbMusicHeart />
+              {favorites.length > 0 && <span className="favorites-count">{favorites.length}</span>}
+            </button>
+            <button onClick={() => navigate("/profile")} className="profile-btn">
+              <CgProfile />
+              <span className="user-name">{user.name}</span>
+            </button>
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
           </div>
         </header>
 
-        <main className="content">
+        <main>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route 
-              path="/trending" 
-              element={
-                <Trending 
-                  setCurrentSong={setCurrentSong} 
-                  setIsPlaying={setIsPlaying} 
-                  isPlaying={isPlaying} 
-                  currentSong={currentSong} 
-                />
-              } 
-            />
             <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/explore"
+              element={
+                <ProtectedRoute>
+                  <Explore />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trending"
+              element={
+                <ProtectedRoute>
+                  <Trending />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/playlists/*"
+              element={
+                <ProtectedRoute>
+                  <Playlists />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/radio"
+              element={
+                <ProtectedRoute>
+                  <Radio />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/podcasts"
+              element={
+                <ProtectedRoute>
+                  <Podcast />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <Favorites />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
-
-        <Footer /> 
       </div>
     </div>
   );

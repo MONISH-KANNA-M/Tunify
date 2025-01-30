@@ -1,0 +1,113 @@
+.radio-container {
+  padding: 20px;
+  margin-left: 85px;
+  margin-top: 80px;
+  color: white;
+}
+
+.radio-container h1 {
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: #de6b2c;
+}
+
+.radio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding-bottom: 100px;
+}
+
+.radio-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.radio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(222, 107, 44, 0.2);
+}
+
+.radio-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.radio-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-button {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(222, 107, 44, 0.9);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+  background: #de6b2c;
+}
+
+.play-button.playing {
+  background: #de6b2c;
+}
+
+.radio-info {
+  padding: 20px;
+}
+
+.radio-info h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.frequency {
+  color: #de6b2c;
+  font-size: 1.1rem;
+  margin: 8px 0;
+}
+
+.genre {
+  color: #999;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .radio-container {
+    margin-left: 20px;
+    margin-top: 60px;
+  }
+
+  .radio-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .radio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .radio-image {
+    height: 180px;
+  }
+}
