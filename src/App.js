@@ -1,14 +1,17 @@
-import "./App.css";
-import Footer from "./components/footer";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import Main from "./components/main";
+import Footer from "./components/footer";
 
-function App() {
+const App = () => {
   return (
-    <div>
-      <Main />
+    <>
+      <Routes>
+        <Route path="/*" element={<Main />} />
+      </Routes>
       <Footer />
-    </div>
+    </>
   );
-}
+};
 
 export default App;

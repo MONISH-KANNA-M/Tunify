@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import "./trending.css";
+import { FaPlay, FaPause } from "react-icons/fa";
+import logo from "./../assets/logo.jpg";
+import vida from './../assets/vida.webp';
+
 import Asakooda from "../music/Aasa Kooda.mp3";
 import Beer from "../music/Beer-Song-MassTamilan.dev.mp3";
 import Chinkitu from "../music/Chikitu-Vibe-MassTamilan.dev.mp3";
@@ -35,21 +39,52 @@ const Trending = () => {
     { id: 15, title: "Chinkitu Vibe", src: Chinkitu },
   ];
 
+  const audioRefs = useRef([]);
+  const [isPlaying, setIsPlaying] = useState({});
+
+  const handlePlayPause = (index) => {
+    const audio = audioRefs.current[index];
+
+    if (audio) {
+      if (isPlaying[index]) {
+        audio.pause();
+      } else {
+        audioRefs.current.forEach((audioEl, i) => {
+          if (i !== index && audioEl) {
+            audioEl.pause();
+          }
+        });
+
+        audio.play();
+      }
+
+      setIsPlaying((prev) => ({
+        ...Object.keys(prev).reduce((acc, key) => {
+          acc[key] = false;
+          return acc;
+        }, {}),
+        [index]: !isPlaying[index],
+      }));
+    }
+  };
+
   return (
     <div className="trending">
       <h1>Trending Now ❤️‍🔥</h1>
-      {songs.map((song) => (
-        <div key={song.id} className="song-card">
-          <h1>{song.id}</h1>
-          <img src="" alt={song.title} />
-          <h2>{song.title}</h2>
-          <button>Play</button>
-          <audio controls>
-            <source src={song.src} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      ))}
+      <img className="full-width-image" src={vida} alt="vida" />
+      <div className="song-list">
+        {songs.map((song, index) => (
+          <div key={song.id} className="song-card">
+            <img src={logo} alt="logo" />
+            <h2>{song.title}</h2>
+
+            <button onClick={() => handlePlayPause(index)}>
+              {isPlaying[index] ? <FaPause /> : <FaPlay />}
+            </button>
+            <audio ref={(el) => (audioRefs.current[index] = el)} src={song.src} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
