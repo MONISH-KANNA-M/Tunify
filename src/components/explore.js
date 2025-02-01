@@ -27,21 +27,24 @@ const Explore = () => {
 
   return (
     <div className="explore-container">
-      <h1>Explore</h1>
-      <div className="categories-grid">
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            className="category-card"
-            onClick={() => handleCategoryClick(category.id)}
-            style={{ backgroundColor: category.color }}
-          >
-            <div className="category-icon">
-              {category.icon}
+      <h1>Explore Music ✨</h1>
+      <div className="explore-content">
+        <div className="categories-grid">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className="category-card"
+              onClick={() => handleCategoryClick(category.id)}
+              style={{ backgroundColor: category.color }}
+              aria-label={`${category.name} category`}
+            >
+              <div className="category-icon" aria-hidden="true">
+                {category.icon}
+              </div>
+              <h3>{category.name}</h3>
             </div>
-            <h3>{category.name}</h3>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

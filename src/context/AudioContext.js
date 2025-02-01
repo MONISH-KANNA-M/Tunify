@@ -1,20 +1,49 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 const AudioContext = createContext();
 
 export const useAudio = () => useContext(AudioContext);
 
 export const AudioProvider = ({ children }) => {
-  const [audio] = useState(new Audio());
+  const audioRef = useRef(new Audio());
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playlist, setPlaylist] = useState([]);
+  const [allSongs, setAllSongs] = useState([]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
   const [recentlyPlayed, setRecentlyPlayed] = useState(() => {
     const saved = localStorage.getItem('recentlyPlayed');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Update localStorage whenever recentlyPlayed changes
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      setDuration(audio.duration);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    const handleEnded = () => {
+      playNext();
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
   }, [recentlyPlayed]);
@@ -26,78 +55,111 @@ export const AudioProvider = ({ children }) => {
     });
   };
 
+  // Function to initialize or update all available songs
+  const initializeSongs = (songs) => {
+    setAllSongs(songs);
+  };
+
   const playSong = (song) => {
     const isSameSong = currentSong?.id === song.id;
 
     if (!isSameSong) {
-      audio.src = song.url;
+      audioRef.current.src = song.url;
       setCurrentSong(song);
       setIsPlaying(true);
-      audio.play();
-      updateRecentlyPlayed(song);
-      // Add to playlist if not already present
-      setPlaylist(prev => {
-        if (!prev.find(s => s.id === song.id)) {
-          return [...prev, song];
-        }
-        return prev;
+      audioRef.current.play().catch(error => {
+        console.error("Error playing audio:", error);
+        setIsPlaying(false);
       });
+      updateRecentlyPlayed(song);
     } else {
       togglePlay();
     }
   };
 
   const togglePlay = () => {
+    if (!currentSong) return;
+
     if (isPlaying) {
-      audio.pause();
+      audioRef.current.pause();
     } else {
-      audio.play();
+      audioRef.current.play().catch(error => {
+        console.error("Error playing audio:", error);
+      });
     }
     setIsPlaying(!isPlaying);
   };
 
+  const findSongIndex = (song) => {
+    return allSongs.findIndex(s => s.id === song?.id);
+  };
+
   const playNext = () => {
-    if (playlist.length === 0) return;
-    const currentIndex = playlist.findIndex(song => song.id === currentSong?.id);
-    const nextIndex = (currentIndex + 1) % playlist.length;
-    playSong(playlist[nextIndex]);
+    if (allSongs.length === 0) return;
+    
+    const currentIndex = findSongIndex(currentSong);
+    if (currentIndex === -1 && allSongs.length > 0) {
+      // If current song is not found but we have songs, play the first song
+      playSong(allSongs[0]);
+      return;
+    }
+    
+    const nextIndex = (currentIndex + 1) % allSongs.length;
+    const nextSong = allSongs[nextIndex];
+    
+    if (nextSong) {
+      playSong(nextSong);
+    }
   };
 
   const playPrevious = () => {
-    if (playlist.length === 0) return;
-    const currentIndex = playlist.findIndex(song => song.id === currentSong?.id);
-    const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-    playSong(playlist[prevIndex]);
+    if (allSongs.length === 0) return;
+    
+    const currentIndex = findSongIndex(currentSong);
+    if (currentIndex === -1 && allSongs.length > 0) {
+      // If current song is not found but we have songs, play the last song
+      playSong(allSongs[allSongs.length - 1]);
+      return;
+    }
+    
+    const prevIndex = (currentIndex - 1 + allSongs.length) % allSongs.length;
+    const prevSong = allSongs[prevIndex];
+    
+    if (prevSong) {
+      playSong(prevSong);
+    }
+  };
+
+  const seek = (time) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
   };
 
   const adjustVolume = (value) => {
-    audio.volume = value;
+    if (audioRef.current) {
+      audioRef.current.volume = value;
+      setVolume(value);
+    }
   };
-
-  useEffect(() => {
-    audio.addEventListener('ended', () => {
-      playNext();
-    });
-
-    return () => {
-      audio.removeEventListener('ended', () => {
-        playNext();
-      });
-      audio.pause();
-    };
-  }, [audio]);
 
   return (
     <AudioContext.Provider value={{
       currentSong,
       isPlaying,
+      currentTime,
+      duration,
+      volume,
+      allSongs,
+      recentlyPlayed,
       playSong,
       togglePlay,
       playNext,
       playPrevious,
-      playlist,
-      recentlyPlayed,
-      adjustVolume
+      seek,
+      adjustVolume,
+      initializeSongs
     }}>
       {children}
     </AudioContext.Provider>

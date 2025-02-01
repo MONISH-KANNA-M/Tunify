@@ -1,181 +1,128 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import { AiFillHome } from "react-icons/ai";
+import { MdOutlineExplore } from "react-icons/md";
+import { FaFire, FaSignOutAlt } from "react-icons/fa";
+import { RiPlayListFill, RiRadioFill } from "react-icons/ri";
+import { IoMdSettings } from "react-icons/io";
+import { SiPodcastaddict } from "react-icons/si";
+import { TbMusicHeart } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
 import Home from "./home";
 import Trending from "./trending";
-import Login from "./login";
 import Profile from "./profile";
 import Radio from "./radio";
 import Podcast from "./podcast";
 import Explore from "./explore";
 import Playlists from "./playlists";
 import Favorites from "./favorites";
-import ProtectedRoute from "./ProtectedRoute";
-import { useUser } from "../context/UserContext";
-import "./main.css";
-import { AiFillHome } from "react-icons/ai";
-import { MdOutlineExplore } from "react-icons/md";
-import { FaFire } from "react-icons/fa";
-import { RiPlayListFill, RiRadioFill } from "react-icons/ri";
-import { IoMdSettings } from "react-icons/io";
-import { SiPodcastaddict } from "react-icons/si";
-import { TbMusicHeart } from "react-icons/tb";
-import { CgProfile } from "react-icons/cg";
+import SearchResults from "./SearchResults";
 import logo from "./../assets/logo.jpg";
+import "./main.css";
 
 const Main = () => {
   const navigate = useNavigate();
-  const { user, favorites, logout } = useUser();
+  const { user, isAuthenticated, favorites, logout } = useUser();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  if (!user) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const navItems = [
+    { path: "/", title: "Home", icon: <AiFillHome /> },
+    { path: "/explore", title: "Explore", icon: <MdOutlineExplore /> },
+    { path: "/trending", title: "Trending", icon: <FaFire /> },
+    { path: "/playlists", title: "Playlists", icon: <RiPlayListFill /> },
+    { path: "/radio", title: "Radio", icon: <RiRadioFill /> },
+    { path: "/podcasts", title: "Podcasts", icon: <SiPodcastaddict /> },
+    { path: "/settings", title: "Settings", icon: <IoMdSettings  /> },
+
+  ];
 
   return (
     <div className="main-container">
       <aside className="sidebar">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/" title="Home">
-                <AiFillHome />
-              </Link>
-            </li>
-            <li>
-              <Link to="/explore" title="Explore">
-                <MdOutlineExplore />
-              </Link>
-            </li>
-            <li>
-              <Link to="/trending" title="Trending">
-                <FaFire />
-              </Link>
-            </li>
-            <li>
-              <Link to="/playlists" title="Playlists">
-                <RiPlayListFill />
-              </Link>
-            </li>
-            <li>
-              <Link to="/radio" title="Radio">
-                <RiRadioFill />
-              </Link>
-            </li>
-            <li>
-              <Link to="/podcasts" title="Podcasts">
-                <SiPodcastaddict />
-              </Link>
-            </li>
-            <li>
-              <Link to="/settings" title="Settings">
-                <IoMdSettings />
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <div className="sidebar-content">
+          <nav>
+            <ul>
+              {navItems.map((item) => (
+                <li key={item.path}>
+                  <Link to={item.path} title={item.title}>
+                    {item.icon}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </aside>
 
       <div className="main-content">
         <header className="top-nav">
-          <div className="left-section">
+          <div className="left-section" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
             <img className="logo" src={logo} alt="Logo" />
-            <h1 id="title"><span className="highlight">Tuni</span>fy</h1>
+            <h1 id="title">
+              <span className="highlight">Tuni</span>fy
+            </h1>
           </div>
           <div className="search-section">
-            <input type="search" placeholder="Search..." />
-            <button>Search</button>
+            <div className="search-container">
+              <form onSubmit={handleSearch}>
+                <input 
+                  type="search" 
+                  placeholder="Search for songs, artists, or albums..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit" className="search-button">Search</button>
+              </form>
+            </div>
           </div>
           <div className="right-section">
-            <button className="favorites-btn" onClick={() => navigate("/favorites")}>
+            <Link to="/favorites" className="icon-button" title="Favorites">
               <TbMusicHeart />
-              {favorites.length > 0 && <span className="favorites-count">{favorites.length}</span>}
-            </button>
-            <button onClick={() => navigate("/profile")} className="profile-btn">
+              {favorites.length > 0 && <span className="badge">{favorites.length}</span>}
+            </Link>
+            <Link to="/profile" className="icon-button" title="Profile">
               <CgProfile />
-              <span className="user-name">{user.name}</span>
+            </Link>
+            <button className="icon-button" title="Logout" onClick={handleLogout}>
+              <FaSignOutAlt />
             </button>
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
           </div>
         </header>
 
-        <main>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/explore"
-              element={
-                <ProtectedRoute>
-                  <Explore />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/trending"
-              element={
-                <ProtectedRoute>
-                  <Trending />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/playlists/*"
-              element={
-                <ProtectedRoute>
-                  <Playlists />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/radio"
-              element={
-                <ProtectedRoute>
-                  <Radio />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/podcasts"
-              element={
-                <ProtectedRoute>
-                  <Podcast />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/favorites"
-              element={
-                <ProtectedRoute>
-                  <Favorites />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/trending" element={<Trending />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/playlists" element={<Playlists />} />
+          <Route path="/radio" element={<Radio />} />
+          <Route path="/podcasts" element={<Podcast />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
       </div>
     </div>
   );

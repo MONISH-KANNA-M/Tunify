@@ -1,5 +1,7 @@
 import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Main from "./components/main";
+import Login from "./components/login";
 import Footer from "./components/footer";
 import { AudioProvider } from "./context/AudioContext";
 import { UserProvider } from "./context/UserContext";
@@ -9,7 +11,10 @@ const App = () => {
     <UserProvider>
       <AudioProvider>
         <div className="app-container">
-          <Main />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={<Main />} />
+          </Routes>
           <Footer />
         </div>
       </AudioProvider>

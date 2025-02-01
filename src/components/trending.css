@@ -1,32 +1,95 @@
-.trending {
+.trending-container {
   margin-left: 85px;
   margin-top: 80px;
   padding: 20px;
   color: white;
+  max-width: 1400px;
+  margin-right: 20px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.trending h1 {
-  font-size: 2.5rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trending-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
   margin-bottom: 30px;
+}
+
+.back-button {
+  background: none;
+  border: none;
   color: #de6b2c;
-  text-align: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-button:hover {
+  background: rgba(222, 107, 44, 0.1);
+  transform: scale(1.1);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+.back-button::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(222, 107, 44, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.back-button:active::after {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.trending-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #de6b2c;
 }
 
 .full-width-image {
-  width: 100%;
+  width: calc(100% - 40px);
   height: 400px;
   object-fit: cover;
   border-radius: 15px;
-  margin-bottom: 40px;
+  margin: 0 20px 40px 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .song-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
   padding: 20px;
   margin-bottom: 100px;
+  justify-content: flex-start;
 }
 
 .song-card {
@@ -38,7 +101,11 @@
   align-items: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  min-height: 250px;
+  height: 280px;
+  width: calc(20% - 24px);
+  min-width: 200px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .song-card:hover {
@@ -47,8 +114,8 @@
 }
 
 .song-card img {
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   border-radius: 10px;
   margin-bottom: 15px;
   object-fit: cover;
@@ -93,71 +160,86 @@
 
 @media (max-width: 1200px) {
   .song-list {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
+    gap: 25px;
+  }
+  
+  .song-card {
+    width: calc(25% - 19px);
+    height: 260px;
+  }
+  
+  .song-card img {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .trending-container {
+    margin-left: 75px;
   }
 }
 
 @media (max-width: 768px) {
-  .trending {
-    margin-left: 20px;
-    margin-top: 60px;
+  .trending-container {
+    margin-left: 65px;
+    margin-right: 10px;
+    padding: 10px;
   }
-
+  
   .song-list {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+    gap: 20px;
+    padding: 10px;
   }
-
+  
+  .song-card {
+    width: calc(33.33% - 14px);
+    min-width: 160px;
+    height: 240px;
+  }
+  
+  .song-card img {
+    width: 130px;
+    height: 130px;
+  }
+  
   .full-width-image {
     height: 300px;
+    margin: 0 10px 30px 10px;
+    width: calc(100% - 20px);
   }
-
+  
+  .trending-header h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+  
   .song-card {
-    min-height: 200px;
     padding: 15px;
-  }
-
-  .song-card img {
-    width: 120px;
-    height: 120px;
   }
 }
 
 @media (max-width: 480px) {
-  .trending {
-    padding: 15px;
+  .trending-container {
+    margin-left: 55px;
+    margin-right: 5px;
   }
-
-  .trending h1 {
-    font-size: 2rem;
-  }
-
+  
   .song-list {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
+    gap: 15px;
   }
-
+  
+  .song-card {
+    width: calc(50% - 8px);
+    min-width: 140px;
+    height: 220px;
+  }
+  
+  .song-card img {
+    width: 120px;
+    height: 120px;
+  }
+  
   .full-width-image {
     height: 200px;
-  }
-
-  .song-card {
-    min-height: 180px;
-    padding: 10px;
-  }
-
-  .song-card img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .song-card h2 {
-    font-size: 1rem;
-  }
-
-  .song-card button {
-    width: 35px;
-    height: 35px;
   }
 }

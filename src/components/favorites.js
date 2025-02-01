@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useUser } from '../context/UserContext';
 import { useAudio } from '../context/AudioContext';
 import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
@@ -6,11 +6,18 @@ import './favorites.css';
 
 const Favorites = () => {
   const { favorites, removeFromFavorites } = useUser();
-  const { currentSong, isPlaying, playSong } = useAudio();
+  const { currentSong, isPlaying, playSong, togglePlay } = useAudio();
+
+  // Sort favorites by date added (newest first)
+  const sortedFavorites = useMemo(() => {
+    return [...favorites].sort((a, b) => {
+      return new Date(b.dateAdded) - new Date(a.dateAdded);
+    });
+  }, [favorites]);
 
   const handlePlayPause = (song) => {
     if (currentSong?.id === song.id) {
-      playSong({ ...song, isPlaying: !isPlaying });
+      togglePlay();
     } else {
       playSong({ ...song, isPlaying: true });
     }
@@ -21,7 +28,7 @@ const Favorites = () => {
       <div className="favorites-empty">
         <FaHeart />
         <h2>No favorites yet</h2>
-        <p>Start adding songs to your favorites by clicking the heart icon!</p>
+        <p>Start adding songs to your favorites by clicking the heart icon while playing a song!</p>
       </div>
     );
   }
@@ -29,11 +36,19 @@ const Favorites = () => {
   return (
     <div className="favorites-container">
       <h1>Your Favorites</h1>
+      <p className="favorites-count">{favorites.length} {favorites.length === 1 ? 'song' : 'songs'}</p>
       <div className="favorites-grid">
-        {favorites.map((song) => (
+        {sortedFavorites.map((song) => (
           <div key={song.id} className="favorite-card">
             <div className="favorite-image">
-              <img src={song.albumArt || song.thumbnail || song.logo} alt={song.title} />
+              <img 
+                src={song.albumArt || song.thumbnail || song.logo} 
+                alt={song.title} 
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/default-album-art.jpg';
+                }}
+              />
               <div className="favorite-overlay">
                 <button
                   className={`play-button ${currentSong?.id === song.id && isPlaying ? 'playing' : ''}`}
@@ -44,11 +59,14 @@ const Favorites = () => {
               </div>
             </div>
             <div className="favorite-info">
-              <h3>{song.title}</h3>
-              <p>{song.artist || song.host || 'Unknown Artist'}</p>
+              <h3 title={song.title}>{song.title}</h3>
+              <p title={song.artist || song.host || 'Unknown Artist'}>
+                {song.artist || song.host || 'Unknown Artist'}
+              </p>
               <button 
                 className="remove-favorite" 
                 onClick={() => removeFromFavorites(song.id)}
+                title="Remove from favorites"
               >
                 <FaHeart />
               </button>

@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 
-export const UserContext = createContext();
+const UserContext = createContext();
 
 export const useUser = () => {
   const context = useContext(UserContext);
@@ -11,26 +11,27 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [favorites, setFavorites] = useState([]);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('token');
+  });
+  
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem('favorites');
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
 
+  // Save favorites to localStorage whenever they change
   useEffect(() => {
-    // Check for existing session/token
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        // You might want to validate the token with your backend here
-        setIsAuthenticated(true);
-        const userData = JSON.parse(localStorage.getItem('user'));
-        setUser(userData);
-      }
-    };
-
-    checkAuth();
-  }, []);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   const login = (userData, token) => {
+    console.log('Login called with:', { userData, token });
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('token', token);
@@ -43,28 +44,39 @@ export const UserProvider = ({ children }) => {
     setFavorites([]);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('favorites');
   };
 
-  const addToFavorites = (track) => {
-    setFavorites(prev => [...prev, track]);
+  const addToFavorites = (song) => {
+    setFavorites(prev => {
+      if (!prev.some(f => f.songId === song.songId)) {
+        return [...prev, song];
+      }
+      return prev;
+    });
   };
 
-  const removeFromFavorites = (trackId) => {
-    setFavorites(prev => prev.filter(track => track.id !== trackId));
+  const removeFromFavorites = (songId) => {
+    setFavorites(prev => prev.filter(f => f.songId !== songId));
+  };
+
+  const isFavorite = (songId) => {
+    return favorites.some(f => f.songId === songId);
+  };
+
+  const value = {
+    user,
+    isAuthenticated,
+    favorites,
+    login,
+    logout,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite
   };
 
   return (
-    <UserContext.Provider 
-      value={{
-        user,
-        isAuthenticated,
-        favorites,
-        login,
-        logout,
-        addToFavorites,
-        removeFromFavorites
-      }}
-    >
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

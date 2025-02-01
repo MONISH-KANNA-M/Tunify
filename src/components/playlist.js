@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import logo from "./../assets/logo.jpg";
@@ -29,7 +29,7 @@ import o from "./../music/Thappu-Thanda.mp3";
 import p from "./../music/The-Arabic-Lullaby-Theme-MassTamilan.dev.mp3";
 
 // 🎵 Corrected Song List with Proper URLs
-const songs = {
+export const songs = {
   "Anirudh": [
     { "id": 1, title: "Vaathi Coming", src: vathi },
     { "id": 2, title: "Arabic Kuthu", src: arabi },
@@ -63,28 +63,47 @@ const songs = {
   // Other artists...
 };
 
+const audioContext = new AudioContext();
+
+const useAudio = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
+
+  const playSong = (song) => {
+    if (isPlaying && currentSong?.id === song.id) {
+      audioContext.suspend();
+      setIsPlaying(false);
+    } else {
+      if (isPlaying) {
+        audioContext.suspend();
+      }
+      const source = audioContext.createBufferSource();
+      const gainNode = audioContext.createGain();
+      gainNode.gain.value = 0.5;
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      fetch(song.url)
+        .then((response) => response.arrayBuffer())
+        .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
+        .then((audioBuffer) => {
+          source.buffer = audioBuffer;
+          source.start();
+          setIsPlaying(true);
+          setCurrentSong(song);
+        });
+    }
+  };
+
+  return { playSong, isPlaying, currentSong };
+};
+
 const Playlist = () => {
   const { artistName } = useParams();
   const navigate = useNavigate();
-  const audioRefs = useRef([]);
-  const [isPlaying, setIsPlaying] = useState({});
+  const { playSong, isPlaying, currentSong } = useAudio();
 
-  const handlePlayPause = (index) => {
-    if (!audioRefs.current[index]) return;
-    const audio = audioRefs.current[index];
-
-    if (isPlaying[index]) {
-      audio.pause();
-    } else {
-      audioRefs.current.forEach((audioEl, idx) => {
-        if (idx !== index && audioEl) {
-          audioEl.pause();
-          setIsPlaying((prev) => ({ ...prev, [idx]: false }));
-        }
-      });
-      audio.play();
-    }
-    setIsPlaying((prev) => ({ ...prev, [index]: !prev[index] }));
+  const handlePlayPause = (song) => {
+    playSong(song);
   };
 
   return (
@@ -96,12 +115,17 @@ const Playlist = () => {
           <div className="song-card" key={song.id || index}>
             <img src={logo} alt={song.title} />
             <h5>{song.title}</h5>
-            <audio ref={(el) => (audioRefs.current[index] = el)}>
-              <source src={song.src} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-            <button onClick={() => handlePlayPause(index)}>
-              {isPlaying[index] ? <FaPause /> : <FaPlay />}
+            <button 
+              className="play-button" 
+              onClick={() => handlePlayPause({
+                id: song.id,
+                title: song.title,
+                artist: artistName,
+                url: song.src,
+                albumArt: logo
+              })}
+            >
+              {isPlaying && currentSong?.id === song.id ? <FaPause /> : <FaPlay />}
             </button>
           </div>
         ))}

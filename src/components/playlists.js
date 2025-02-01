@@ -239,69 +239,42 @@ const Playlists = () => {
     }
   ]);
 
+  const handlePlaylistClick = (playlist) => {
+    setSelectedPlaylist(playlist);
+  };
+
   return (
     <div className="playlists-container">
-      <div className="playlists-grid">
-        {playlists.map((playlist) => (
-          <div
-            key={playlist.id}
-            className={`playlist-card ${selectedPlaylist?.id === playlist.id ? 'active' : ''}`}
-            onClick={() => setSelectedPlaylist(playlist)}
-          >
-            <div className="playlist-image-container">
-              <img src={playlist.imageUrl} alt={playlist.title} />
-              <div className="playlist-overlay">
-                <button className="play-button">
-                  <FaPlay />
-                </button>
-              </div>
-            </div>
-            <div className="playlist-info">
-              <h3>{playlist.title}</h3>
-              <p>{playlist.description}</p>
-              <span className="song-count">
-                <FaMusic /> {playlist.songs.length} songs
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {selectedPlaylist && (
-        <div className="playlist-details">
-          <div className="playlist-header">
-            <img src={selectedPlaylist.imageUrl} alt={selectedPlaylist.title} />
-            <div className="playlist-header-info">
-              <h2>{selectedPlaylist.title}</h2>
-              <p>{selectedPlaylist.description}</p>
-              <button className="play-all-button">
-                <FaPlay /> Play All
-              </button>
-            </div>
-          </div>
-          <div className="songs-list">
-            {selectedPlaylist.songs.map((song, index) => (
-              <div key={index} className="song-item">
-                <span className="song-number">{index + 1}</span>
-                <div className="song-info">
-                  <div className="song-image">
-                    <img src={song.albumArt} alt={song.title} />
-                  </div>
-                  <div className="song-details">
-                    <h4>{song.title}</h4>
-                    <p>{song.artist}</p>
-                  </div>
+      <h1>Your Playlists 🎵</h1>
+      <div className="playlists-content">
+        <div className="playlists-grid">
+          {playlists.map((playlist) => (
+            <div
+              key={playlist.id}
+              className="playlist-card"
+              onClick={() => handlePlaylistClick(playlist)}
+              aria-label={`Play ${playlist.title} playlist`}
+            >
+              <div className="playlist-image-container">
+                <img src={playlist.imageUrl} alt={playlist.title} />
+                <div className="playlist-overlay">
+                  <button className="play-button" aria-label={`Play ${playlist.title}`}>
+                    <FaPlay />
+                  </button>
                 </div>
-                <span className="song-album">{song.album}</span>
-                <span className="song-duration">{song.duration}</span>
-                <button className="play-song-button">
-                  <FaPlay />
-                </button>
               </div>
-            ))}
-          </div>
+              <div className="playlist-info">
+                <h3>{playlist.title}</h3>
+                <p>{playlist.description}</p>
+                <div className="song-count">
+                  <FaMusic />
+                  <span>{playlist.songs.length} songs</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };

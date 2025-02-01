@@ -2,113 +2,130 @@ import React, { useState, useEffect } from "react";
 import { FaPlay, FaPause, FaClock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAudio } from "../context/AudioContext";
+import { songs } from "./playlist";
+import logo from './../assets/logo.jpg';
 import "./home.css";
-
-// Import playlists data
-import playlistsData from '../data/playlistsData';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { currentSong, isPlaying, playSong, recentlyPlayed } = useAudio();
+  const { currentSong, isPlaying, playSong } = useAudio();
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
   const [discoveredSongs, setDiscoveredSongs] = useState([]);
 
-  // Function to get random songs from playlists
-  const getRandomSongs = () => {
-    const allSongs = playlistsData.reduce((acc, playlist) => {
-      const playlistSongs = playlist.songs.map(song => ({
+  useEffect(() => {
+    // Get all songs from playlist
+    const allSongs = Object.entries(songs).reduce((acc, [artist, artistSongs]) => {
+      return [...acc, ...artistSongs.map(song => ({
         ...song,
-        playlistName: playlist.title,
-        imageUrl: song.albumArt || playlist.imageUrl,
-        id: `${playlist.id}_${song.title}`,
-        url: song.url || `path/to/audio/${song.title}.mp3` // Add proper URL here
-      }));
-      return [...acc, ...playlistSongs];
+        artist,
+        imageUrl: logo,
+        url: song.src
+      }))];
     }, []);
 
-    const shuffledSongs = allSongs
+    // Get random songs for discovery
+    const randomSongs = [...allSongs]
       .sort(() => Math.random() - 0.5)
-      .slice(0, 10);
-    
-    if (shuffledSongs.length < 10) {
-      const additional = Array(10 - shuffledSongs.length)
-        .fill()
-        .map(() => shuffledSongs[Math.floor(Math.random() * shuffledSongs.length)]);
-      return [...shuffledSongs, ...additional];
-    }
-    
-    return shuffledSongs;
-  };
+      .slice(0, 8);
+    setDiscoveredSongs(randomSongs);
 
-  useEffect(() => {
-    setDiscoveredSongs(getRandomSongs());
+    // Get recently played from localStorage or use first few songs
+    const savedRecent = localStorage.getItem('recentlyPlayed');
+    if (savedRecent) {
+      setRecentlyPlayed(JSON.parse(savedRecent));
+    } else {
+      setRecentlyPlayed(allSongs.slice(0, 5));
+    }
   }, []);
 
   const handlePlayPause = (song) => {
+    // Add to recently played if not already in the list
+    setRecentlyPlayed(prev => {
+      const isExisting = prev.some(s => s.id === song.id);
+      if (!isExisting) {
+        const newList = [song, ...prev].slice(0, 4); // Keep only last 4 songs
+        return newList;
+      }
+      return prev;
+    });
+    
     playSong(song);
   };
 
   return (
     <div className="home-container">
-      <h1>Welcome to Tune</h1>
-      
+      <h1>Welcome to Tunify</h1>
+
       {/* Recently Played Section */}
       <section className="recently-played-section">
         <h2>Recently Played</h2>
         {recentlyPlayed.length === 0 ? (
           <p className="no-songs">No songs played yet. Start playing to see your history!</p>
         ) : (
-          <div className="song-grid">
+          <div className="grid-container">
             {recentlyPlayed.map((song) => (
-              <div key={`${song.id}-${Date.now()}`} className="song-card">
-                <div className="song-image">
-                  <img src={song.albumArt || song.imageUrl} alt={song.title} />
+              <div key={song.id} className="card">
+                <div className="card-image">
+                  <img src={song.imageUrl} alt={song.title} />
+                  <button
+                    className={`play-button ${currentSong?.id === song.id && isPlaying ? 'playing' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayPause(song);
+                    }}
+                  >
+                    {currentSong?.id === song.id && isPlaying ? <FaPause /> : <FaPlay />}
+                  </button>
                 </div>
-                <div className="song-info">
-                  <h3>{song.title}</h3>
-                  <p className="artist">{song.artist}</p>
-                  {song.duration && (
-                    <p className="duration">
-                      <FaClock /> {song.duration}
-                    </p>
-                  )}
-                </div>
-                <button
-                  className={`play-button ${currentSong?.id === song.id && isPlaying ? 'playing' : ''}`}
-                  onClick={() => handlePlayPause(song)}
-                >
-                  {currentSong?.id === song.id && isPlaying ? <FaPause /> : <FaPlay />}
-                </button>
+                <h5>{song.title}</h5>
+                <p className="artist">{song.artist}</p>
               </div>
             ))}
           </div>
         )}
       </section>
 
-      {/* Discovered by You Section */}
+      {/* Discovered Section */}
       <section className="discovered-section">
-        <h2>Discovered by You</h2>
-        <div className="song-grid">
+        <h2>Discover For You</h2>
+        <div className="grid-container">
           {discoveredSongs.map((song) => (
-            <div key={song.id} className="song-card">
-              <div className="song-image">
+            <div key={song.id} className="card">
+              <div className="card-image">
                 <img src={song.imageUrl} alt={song.title} />
+                <button
+                  className={`play-button ${currentSong?.id === song.id && isPlaying ? 'playing' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlayPause(song);
+                  }}
+                >
+                  {currentSong?.id === song.id && isPlaying ? <FaPause /> : <FaPlay />}
+                </button>
               </div>
-              <div className="song-info">
-                <h3>{song.title}</h3>
-                <p className="artist">{song.artist}</p>
-                <p className="playlist-name">From {song.playlistName}</p>
-                {song.duration && (
-                  <p className="duration">
-                    <FaClock /> {song.duration}
-                  </p>
-                )}
-              </div>
-              <button
-                className={`play-button ${currentSong?.id === song.id && isPlaying ? 'playing' : ''}`}
-                onClick={() => handlePlayPause(song)}
-              >
-                {currentSong?.id === song.id && isPlaying ? <FaPause /> : <FaPlay />}
-              </button>
+              <h5>{song.title}</h5>
+              <p className="artist">{song.artist}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Favourite Artists Section */}
+      <section className="favourites-section">
+        <h2>Your Favourites</h2>
+        <div className="grid-container">
+          {[
+            "Anirudh",
+            "A. R. Rahman",
+            "Yuvan Shankar",
+            "Harris Jayaraj",
+            "Hip Hop Tamizha",
+            "G. V. Prakash",
+            "Thaman S"
+          ].map((artist, index) => (
+            <div className="card" key={index} onClick={() => navigate(`/playlist/${artist}`)}>
+              <img src={logo} alt={artist} />
+              <h5>{artist}</h5>
             </div>
           ))}
         </div>

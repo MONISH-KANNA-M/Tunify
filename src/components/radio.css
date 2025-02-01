@@ -1,21 +1,27 @@
 .radio-container {
-  padding: 20px;
   margin-left: 85px;
   margin-top: 80px;
+  padding: 20px;
   color: white;
+  max-width: 1400px;
+  margin-right: 20px;
 }
 
 .radio-container h1 {
+  font-size: 2.5rem;
   margin-bottom: 30px;
-  font-size: 2rem;
   color: #de6b2c;
+  text-align: left;
+  padding-left: 20px;
 }
 
 .radio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
-  padding-bottom: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 20px;
+  margin-bottom: 100px;
+  justify-content: flex-start;
 }
 
 .radio-card {
@@ -23,17 +29,24 @@
   border-radius: 15px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: calc(20% - 24px);
+  min-width: 200px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 280px;
+  position: relative;
+  cursor: pointer;
 }
 
 .radio-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(222, 107, 44, 0.2);
+  box-shadow: 0 6px 12px rgba(222, 107, 44, 0.2);
 }
 
 .radio-image {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 160px;
 }
 
 .radio-image img {
@@ -42,10 +55,14 @@
   object-fit: cover;
 }
 
-.play-button {
+.play-button-container {
   position: absolute;
   bottom: 15px;
   right: 15px;
+  z-index: 2;
+}
+
+.play-button {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -70,44 +87,118 @@
 }
 
 .radio-info {
-  padding: 20px;
+  padding: 15px;
 }
 
 .radio-info h3 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   color: white;
+  margin-bottom: 8px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .frequency {
   color: #de6b2c;
-  font-size: 1.1rem;
-  margin: 8px 0;
+  font-size: 1rem;
+  margin-bottom: 5px;
 }
 
 .genre {
   color: #999;
   font-size: 0.9rem;
-  margin: 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+  .radio-grid {
+    gap: 25px;
+  }
+  
+  .radio-card {
+    width: calc(25% - 19px);
+    height: 260px;
+  }
+  
+  .radio-image {
+    height: 140px;
+  }
+  
+  .radio-container {
+    margin-left: 75px;
+  }
 }
 
 @media (max-width: 768px) {
   .radio-container {
-    margin-left: 20px;
-    margin-top: 60px;
+    margin-left: 65px;
+    margin-right: 10px;
+    padding: 10px;
   }
-
+  
   .radio-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 10px;
+  }
+  
+  .radio-card {
+    width: calc(33.33% - 14px);
+    min-width: 160px;
+    height: 240px;
+  }
+  
+  .radio-image {
+    height: 130px;
+  }
+  
+  .radio-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+  
+  .play-button {
+    width: 45px;
+    height: 45px;
   }
 }
 
 @media (max-width: 480px) {
-  .radio-grid {
-    grid-template-columns: 1fr;
+  .radio-container {
+    margin-left: 55px;
+    margin-right: 5px;
   }
-
+  
+  .radio-grid {
+    gap: 15px;
+  }
+  
+  .radio-card {
+    width: calc(50% - 8px);
+    min-width: 140px;
+    height: 220px;
+  }
+  
   .radio-image {
-    height: 180px;
+    height: 120px;
+  }
+  
+  .play-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .radio-info h3 {
+    font-size: 1rem;
+  }
+  
+  .frequency {
+    font-size: 0.9rem;
   }
 }
