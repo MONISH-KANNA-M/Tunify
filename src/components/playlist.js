@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause, FaHeart } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 import logo from "./../assets/logo.jpg";
 import "./playlist.css";
 import why from "./../music/Why-this-kolaveri-di.mp3";
@@ -28,7 +29,7 @@ import n from "./../music/Oru-Kan-Jaadai.mp3";
 import o from "./../music/Thappu-Thanda.mp3";
 import p from "./../music/The-Arabic-Lullaby-Theme-MassTamilan.dev.mp3";
 
-// 🎵 Corrected Song List with Proper URLs
+// Corrected Song List with Proper URLs
 export const songs = {
   "Anirudh": [
     { "id": 1, title: "Vaathi Coming", src: vathi },
@@ -101,9 +102,31 @@ const Playlist = () => {
   const { artistName } = useParams();
   const navigate = useNavigate();
   const { playSong, isPlaying, currentSong } = useAudio();
+  const { addToFavorites, removeFromFavorites, isFavorite, isAuthenticated } = useUser();
 
   const handlePlayPause = (song) => {
     playSong(song);
+  };
+
+  const handleFavoriteClick = (song) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    const songData = {
+      id: song.id,
+      title: song.title,
+      artist: artistName,
+      url: song.src,
+      albumArt: logo
+    };
+
+    if (isFavorite(song.id.toString())) {
+      removeFromFavorites(song.id.toString());
+    } else {
+      addToFavorites(songData);
+    }
   };
 
   return (
@@ -115,18 +138,26 @@ const Playlist = () => {
           <div className="song-card" key={song.id || index}>
             <img src={logo} alt={song.title} />
             <h5>{song.title}</h5>
-            <button 
-              className="play-button" 
-              onClick={() => handlePlayPause({
-                id: song.id,
-                title: song.title,
-                artist: artistName,
-                url: song.src,
-                albumArt: logo
-              })}
-            >
-              {isPlaying && currentSong?.id === song.id ? <FaPause /> : <FaPlay />}
-            </button>
+            <div className="song-controls">
+              <button 
+                className="play-button" 
+                onClick={() => handlePlayPause({
+                  id: song.id,
+                  title: song.title,
+                  artist: artistName,
+                  url: song.src,
+                  albumArt: logo
+                })}
+              >
+                {isPlaying && currentSong?.id === song.id ? <FaPause /> : <FaPlay />}
+              </button>
+              <button 
+                className={`favorite-button ${isFavorite(song.id.toString()) ? 'active' : ''}`}
+                onClick={() => handleFavoriteClick(song)}
+              >
+                <FaHeart />
+              </button>
+            </div>
           </div>
         ))}
       </div>

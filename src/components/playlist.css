@@ -79,3 +79,27 @@
     display: none;
   }
   
+  .song-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .favorite-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+    padding: 5px;
+    transition: color 0.3s ease;
+  }
+  
+  .favorite-button:hover {
+    color: #e74c3c;
+  }
+  
+  .favorite-button.active {
+    color: #e74c3c;
+  }

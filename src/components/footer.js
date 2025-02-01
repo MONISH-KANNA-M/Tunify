@@ -33,7 +33,7 @@ const Footer = () => {
   const [showPlaylist, setShowPlaylist] = useState(false);
 
   // Check if current song is in favorites
-  const isCurrentSongLiked = currentSong ? isFavorite(currentSong.songId) : false;
+  const isCurrentSongLiked = currentSong ? isFavorite(currentSong.id) : false;
 
   const formatTime = (time) => {
     if (isNaN(time) || time === 0) return "0:00";
@@ -73,14 +73,14 @@ const Footer = () => {
     if (!currentSong) return;
     
     if (isCurrentSongLiked) {
-      removeFromFavorites(currentSong.songId);
+      removeFromFavorites(currentSong.id);
     } else {
       addToFavorites({
-        songId: currentSong.songId,
+        id: currentSong.id,
         title: currentSong.title,
         artist: currentSong.artist,
-        albumArt: currentSong.albumArt,
-        audioUrl: currentSong.audioUrl
+        albumArt: currentSong.albumArt || logo,
+        url: currentSong.url || currentSong.audioUrl
       });
     }
   };
@@ -177,8 +177,8 @@ const Footer = () => {
           <div className="playlist-songs">
             {allSongs.map((song, index) => (
               <div
-                key={song.songId}
-                className={`playlist-item ${currentSong.songId === song.songId ? 'active' : ''}`}
+                key={song.id}
+                className={`playlist-item ${currentSong.id === song.id ? 'active' : ''}`}
                 onClick={() => playSong(song)}
               >
                 <img src={song.albumArt || logo} alt="Album Art" />

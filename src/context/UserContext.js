@@ -25,10 +25,35 @@ export const UserProvider = ({ children }) => {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
 
-  // Save favorites to localStorage whenever they change
+  // Load favorites from server on login
   useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    const loadFavorites = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token || !isAuthenticated) {
+          setFavorites([]);
+          return;
+        }
+
+        const response = await fetch('http://localhost:5000/api/favorites', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load favorites');
+        }
+
+        const favorites = await response.json();
+        setFavorites(favorites);
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      }
+    };
+
+    loadFavorites();
+  }, [isAuthenticated]);
 
   const login = (userData, token) => {
     console.log('Login called with:', { userData, token });
@@ -47,21 +72,68 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('favorites');
   };
 
-  const addToFavorites = (song) => {
-    setFavorites(prev => {
-      if (!prev.some(f => f.songId === song.songId)) {
-        return [...prev, song];
+  const addToFavorites = async (song) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:5000/api/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          songId: song.id.toString(),
+          title: song.title,
+          artist: song.artist,
+          albumArt: song.albumArt,
+          audioUrl: song.url
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add to favorites');
       }
-      return prev;
-    });
+
+      const updatedFavorites = await response.json();
+      setFavorites(updatedFavorites);
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+    }
   };
 
-  const removeFromFavorites = (songId) => {
-    setFavorites(prev => prev.filter(f => f.songId !== songId));
+  const removeFromFavorites = async (songId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      // Convert songId to string if it's not already
+      const songIdStr = songId.toString();
+
+      const response = await fetch(`http://localhost:5000/api/favorites/${songIdStr}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove from favorites');
+      }
+
+      // Update local state immediately
+      setFavorites(prev => prev.filter(f => f.songId !== songIdStr));
+
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+    }
   };
 
   const isFavorite = (songId) => {
-    return favorites.some(f => f.songId === songId);
+    if (!songId) return false;
+    const songIdStr = songId.toString();
+    return favorites.some(f => f.songId === songIdStr);
   };
 
   const value = {

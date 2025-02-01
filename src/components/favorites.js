@@ -23,6 +23,10 @@ const Favorites = () => {
     }
   };
 
+  const handleRemoveFavorite = (songId) => {
+    removeFromFavorites(songId.toString());
+  };
+
   if (favorites.length === 0) {
     return (
       <div className="favorites-empty">
@@ -65,7 +69,7 @@ const Favorites = () => {
               </p>
               <button 
                 className="remove-favorite" 
-                onClick={() => removeFromFavorites(song.id)}
+                onClick={() => handleRemoveFavorite(song.songId || song.id)}
                 title="Remove from favorites"
               >
                 <FaHeart />
